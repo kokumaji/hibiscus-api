@@ -20,6 +20,7 @@ sourceSets {
 
 dependencies {
     modules project(':base')
+    modules project(':bukkit')
 }
 
 group = "dev.kkmji"
@@ -78,6 +79,7 @@ subprojects {
 tasks {
 
     jar.dependsOn ":base:build"
+    jar.dependsOn ":bukkit:build"
 
     jar {
         manifest {
