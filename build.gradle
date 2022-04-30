@@ -1,0 +1,92 @@
+plugins {
+    id 'java'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+configurations {
+    modules
+    compile.extendsFrom(modules)
+}
+
+sourceSets {
+    test {
+        java.srcDirs += ['src/main']
+    }
+}
+
+dependencies {
+    modules project(':base')
+}
+
+group = "dev.kkmji"
+version = "INDEV"
+
+subprojects {
+    apply plugin: "java"
+
+    repositories {
+
+        // jcenter() DEPRECATED
+        mavenCentral()
+
+        maven {
+            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+            content {
+                includeGroup 'org.bukkit'
+                includeGroup 'org.spigotmc'
+            }
+        }
+
+        // Repositories for Spigot-API
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
+        // Official Minecraft Repository
+        // (Important for Auth Lib)
+        maven { url = "https://libraries.minecraft.net/" }
+
+    }
+
+
+
+    dependencies {
+
+        // annotations
+        annotationProcessor "org.projectlombok:lombok:1.18.20"
+        compileOnly "org.projectlombok:lombok:1.18.20"
+
+        compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+
+        // Required by JUnit for some reason?
+        testImplementation 'org.hamcrest:hamcrest:2.2'
+        testImplementation 'org.hamcrest:hamcrest-library:2.2'
+        testImplementation 'junit:junit:4.13.2'
+        
+        testImplementation "org.junit.jupiter:junit-jupiter-params:5.8.2"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+
+
+    }
+}
+
+tasks {
+
+    jar.dependsOn ":base:build"
+
+    jar {
+        manifest {
+            attributes "Main-Class": "dev.kkmji.hibiscus.base.Hibiscus"
+        }
+
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+    
+}
